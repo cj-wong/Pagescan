@@ -3,27 +3,74 @@
 
 <head>
   <title>Web for scanimage</title>
-  <meta name="viewport" charset="UTF-8">
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta name="viewport" charset="UTF-8" />
+  <link rel="stylesheet" type="text/css" href="static/style.css" />
 </head>
 
-<h1>Web for <span class="code">scanimage</span></h1>
+<h1 class="text padded">Web for <span class="code">scanimage</span></h1>
 
 <body id="background">
-{% if printers %}
-  <!-- Printer selection -->
-  <label for="printers">Printer: </label>
-  <select id="printers">
-  {% for printer in printers %}
-    <option value="{{ printer }}">{{ printer }}</option>
-  {% endfor %}
-  </select>
+{% if scanners %}
+  <form class="options" action="scan.html" method="post">
+    <span class="blocked">
+      <!-- Printer selection -->
+      <div class="separated blocked">
+        <label for="scanner" id="scanner" class="spaced blocked text">Scanner</label>
+        <select id="scanner" name="scanner">
+        {% for scanner in scanners %}
+          <option value="{{ scanner }}">{{ scanner }}</option>
+        {% endfor %}
+        </select>
+      </div>
 
-  <!-- <iframe> -->
+      <!-- scanimage options -->
+      <p class="text">
+        <span class="options spaced blocked">Color</span>
+        <span class="spaced blocked">
+          <input type="radio" id="c_bw" name="color" value="bw" checked>
+          <label for="c_bw" class="spaced">Black & White</label>
+        </span>
+        <span class="spaced blocked">
+          <input type="radio" id="c_color" name="color" value="color">
+          <label for="c_color" class="spaced">Color</label>
+        </span>
+      </p>
+
+      <p class="text">
+        <span class="options spaced blocked">Format</span>
+        <span class="spaced blocked">
+          <input type="radio" id="fmt_pnm" name="format" value="pnm" checked>
+          <label for="fmt_pnm">PNM</label>
+        </span>
+        <span class="spaced blocked">
+          <input type="radio" id="fmt_tiff" name="format" value="tiff">
+          <label for="fmt_tiff">TIFF</label>
+        </span>
+      </p>
+
+      <label for="dpi" class="options spaced blocked text padded">DPI</label>
+      <select id="dpi" name="dpi">
+        <option value="dpi_72">72</option>
+        <option value="dpi_96">96</option>
+        <option value="dpi_150">150</option>
+        <option value="dpi_300">300</option>
+      </select>
+    </span>
+
+    <!-- Preview and scan buttons -->
+    <span class="blocked spaced">
+      <input type="submit" class="button" formmethod="post" formtarget="frame" name="preview" value="Preview"\>
+      <br />
+      <input type="submit" class="button" formmethod="post" formtarget="frame" name="scan" value="Scan"\>
+    </span>
+  </form>
+
+  <!-- Scan preview frame -->
+  <iframe src="scan.html" id="frame" name="frame"></iframe>
 
 {% else %}
-  <!-- If no printer was found, do not show the interface. -->
-  <h2>No printers were found. Try checking
+  <!-- If no scanner was found, do not show the interface. -->
+  <h2>No scanners were found. Try checking
     <span class="code">scanimage -L.</span>
   </h2>
 {% endif %}
