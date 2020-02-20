@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+  <title>Web for scanimage</title>
+  <meta name="viewport" charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<h1>Web for <span class="code">scanimage</span></h1>
+
+<body id="background">
+{% if printers %}
+  <!-- Printer selection -->
+  <label for="printers">Printer: </label>
+  <select id="printers">
+  {% for printer in printers %}
+    <option value="{{ printer }}">{{ printer }}</option>
+  {% endfor %}
+  </select>
+
+  <!-- <iframe> -->
+
+{% else %}
+  <!-- If no printer was found, do not show the interface. -->
+  <h2>No printers were found. Try checking
+    <span class="code">scanimage -L.</span>
+  </h2>
+{% endif %}
+</body>
+
+</html>
