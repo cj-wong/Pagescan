@@ -1,5 +1,5 @@
+import os.path
 import subprocess
-from pathlib import Path
 from typing import Callable, Dict, List
 
 import pendulum
@@ -47,7 +47,7 @@ def scan() -> Callable[..., str]:
             options['format'] = options['format'].lower()
             command = process_options(scanner, options)
             name = f"{pendulum.now()}.{options['format']}"
-            file = Path(f"scans/{name}")
+            file = os.path.abspath(f"scans/{name}")
             run_command(command, file)
             return app.send_file(
                 file,
@@ -55,8 +55,7 @@ def scan() -> Callable[..., str]:
                 attachment_filename=name,
                 )
         else:
-            name = f"{pendulum.now()}.pnm"
-            file = Path(f"static/{name}")
+            file = os.path.abspath(f"static/{pendulum.now()}.pnm")
             run_command(PREVIEW, file)
             return render_template('scan.html', image=file)
 
@@ -105,16 +104,17 @@ def process_options(scanner: str, options: Dict[str, str]) -> List[str]:
     return args
 
 
-def run_command(command: List[str], file: Path) -> None:
+def run_command(command: List[str], file: str) -> None:
     """Run the command defined as a list of strings. Both "Preview"
     and "Scan" use this. Outputs the file name of the created scan.
 
     Args:
         command (List[str]): the command in list form
-        file (Path): where the resulting scan will be stored
+        file (str): where the resulting scan will be stored
 
     """
-    subprocess.Popen(command, stdout=file)
+    with open(file, 'w') as f:
+        subprocess.Popen(command, stdout=f)
 
 
 SCANNERS = get_scanners()
