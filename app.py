@@ -44,8 +44,9 @@ def scan() -> Callable[..., str]:
     else:
         scanner = request.form['scanner'].split('`')[1].split("'")[0]
         if 'scan' in request.form:
-            request.form['format'] = request.form['format'].lower()
-            command = process_options(scanner, request.form)
+            options = request.form.to_dict()
+            options['format'] = options['format'].lower()
+            command = process_options(scanner, options)
             file = run_command(command)
             name = f"{pendulum.now()}.{request.form['format']}"
             return app.send_file(
@@ -72,7 +73,7 @@ def get_scanners() -> List[str]:
 
     """
     scanners = subprocess.check_output(['scanimage', '-L'])
-    return scanners.decode('utf-8').split('\n')
+    return scanners.decode('utf-8').rstrip().split('\n')
 
 
 def process_options(scanner: str, options: Dict[str, str]) -> List[str]:
@@ -117,6 +118,8 @@ def run_command(command: List[str]) -> str:
     return subprocess.Popen(TMP, stdin=file)
 
 
+SCANNERS = get_scanners()
+
+
 if __name__ == "__main__":
-    SCANNERS = get_scanners()
     app.run()
