@@ -52,12 +52,13 @@ def scan() -> Callable[..., str]:
             return app.send_file(
                 file,
                 as_attachment=True,
-                attachment_filename=name,
+                attachment_filename=file,
                 )
         else:
-            file = os.path.abspath(f"static/{pendulum.now()}.pnm")
+            name = f"{pendulum.now()}.pnm"
+            file = os.path.abspath(f"static/{name}")
             run_command(PREVIEW, file)
-            return render_template('scan.html', image=file)
+            return render_template('scan.html', image=name)
 
 
 def get_scanners() -> List[str]:
@@ -114,7 +115,8 @@ def run_command(command: List[str], file: str) -> None:
 
     """
     with open(file, 'w') as f:
-        subprocess.Popen(command, stdout=f)
+        command = subprocess.Popen(command, stdout=f)
+        command.wait()
 
 
 SCANNERS = get_scanners()
