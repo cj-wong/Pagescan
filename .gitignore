@@ -9,3 +9,6 @@
 # Project-specific files
 *.ini
 *.sock
+*.pnm
+*.tiff
+scans/*

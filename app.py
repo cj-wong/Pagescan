@@ -9,7 +9,6 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 
 PREVIEW = ['scanimage']
-TMP = ['mktemp', '--tmpdir=static']
 
 
 @app.route('/')
@@ -43,19 +42,21 @@ def scan() -> Callable[..., str]:
         return render_template('scan.html', image=None)
     else:
         scanner = request.form['scanner'].split('`')[1].split("'")[0]
+        name = f"{pendulum.now()}.{options['format']}"
         if 'scan' in request.form:
             options = request.form.to_dict()
             options['format'] = options['format'].lower()
             command = process_options(scanner, options)
-            file = run_command(command)
-            name = f"{pendulum.now()}.{request.form['format']}"
+            file = Path(f"scans/{name}")
+            run_command(command, file)
             return app.send_file(
-                Path(file),
+                file,
                 as_attachment=True,
                 attachment_filename=name,
                 )
         else:
-            file = run_command(PREVIEW)
+            file = Path(f"static/{name}")
+            run_command(PREVIEW, file)
             return render_template('scan.html', image=file)
 
 
@@ -103,19 +104,16 @@ def process_options(scanner: str, options: Dict[str, str]) -> List[str]:
     return args
 
 
-def run_command(command: List[str]) -> str:
+def run_command(command: List[str], file: Path) -> None:
     """Run the command defined as a list of strings. Both "Preview"
     and "Scan" use this. Outputs the file name of the created scan.
 
     Args:
         command (List[str]): the command in list form
-
-    Returns:
-        str: the file name of the resulting scan
+        file (Path): where the resulting scan will be stored
 
     """
-    file = subprocess.Popen(command, stdout=subprocess.PIPE)
-    return subprocess.Popen(TMP, stdin=file)
+    subprocess.Popen(command, stdout=file)
 
 
 SCANNERS = get_scanners()
