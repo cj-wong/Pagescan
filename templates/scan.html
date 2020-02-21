@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+  <title>Web for scanimage</title>
+  <meta name="viewport" charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="static/style.css">
+</head>
+
+<body id="frame-background">
+{% if image %}
+  <!-- Show an image here. -->
+  <img src="{{ image }}" id="preview" />
+{% else %}
+  <!-- Blank page if nothing was scanned. -->
+{% endif %}
+</body>
+
+</html>

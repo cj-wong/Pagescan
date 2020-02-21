@@ -29,8 +29,14 @@ span.code {
 #frame {
     height: 90vh;
     width: 90vw;
-    padding-top: 10px;
-    padding-left: 5vw;
+}
+#frame-background {
+    background-color: #708394;
+}
+#preview {
+    height: auto;
+    width: auto;
+    max-width: 100%;
 }
 #scanner {
     font-size: 150%;
