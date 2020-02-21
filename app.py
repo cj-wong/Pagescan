@@ -42,11 +42,11 @@ def scan() -> Callable[..., str]:
         return render_template('scan.html', image=None)
     else:
         scanner = request.form['scanner'].split('`')[1].split("'")[0]
-        name = f"{pendulum.now()}.{options['format']}"
         if 'scan' in request.form:
             options = request.form.to_dict()
             options['format'] = options['format'].lower()
             command = process_options(scanner, options)
+            name = f"{pendulum.now()}.{options['format']}"
             file = Path(f"scans/{name}")
             run_command(command, file)
             return app.send_file(
@@ -55,6 +55,7 @@ def scan() -> Callable[..., str]:
                 attachment_filename=name,
                 )
         else:
+            name = f"{pendulum.now()}.pnm"
             file = Path(f"static/{name}")
             run_command(PREVIEW, file)
             return render_template('scan.html', image=file)
