@@ -1,3 +1,6 @@
+html {
+    font-family: sans-serif;
+}
 .blocked {
     display: inline-block;
 }
@@ -17,14 +20,16 @@
 .spaced {
     min-width: 10vw;
 }
-.text {
-    font-family: sans-serif;
-}
 span.code {
     font-family: monospace;
+    font-size: 115%;
 }
 #background {
     background-color: #758B9E;
+}
+#error {
+    font-style: italic;
+    color: #B72B2B;
 }
 #frame {
     height: 90vh;

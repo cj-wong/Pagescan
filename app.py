@@ -5,10 +5,13 @@ from typing import Callable, Dict, List
 import pendulum
 from flask import Flask, render_template, request
 
+from preview import preview
+
 
 app = Flask(__name__)
+app.register_blueprint(preview)
 
-PREVIEW = ['scanimage']
+PREVIEW_SCAN = ['scanimage']
 
 
 @app.route('/')
@@ -20,7 +23,11 @@ def main() -> Callable[..., str]:
         Callable[..., str]: the template, rendered
 
     """
-    return render_template('index.html', scanners=SCANNERS)
+    return render_template(
+        'index.html',
+        scanners=SCANNERS,
+        preview=PREVIEW_EXISTS,
+        )
 
 
 @app.route('/scan.html', methods=['GET', 'POST'])
@@ -39,7 +46,11 @@ def scan() -> Callable[..., str]:
 
     """
     if request.method != 'POST':
-        return render_template('scan.html', image=None)
+        return render_template(
+            'scan.html',
+            image=None,
+            preview=PREVIEW_EXISTS,
+            )
     else:
         scanner = request.form['scanner'].split('`')[1].split("'")[0]
         if 'scan' in request.form:
@@ -56,9 +67,13 @@ def scan() -> Callable[..., str]:
                 )
         else:
             name = f"{pendulum.now()}.pnm"
-            file = os.path.abspath(f"static/{name}")
-            run_command(PREVIEW, file)
-            return render_template('scan.html', image=name)
+            file = os.path.abspath(f"previews/{name}")
+            run_command(PREVIEW_SCAN, file)
+            return render_template(
+                'scan.html',
+                image=name,
+                preview=PREVIEW_EXISTS,
+                )
 
 
 def get_scanners() -> List[str]:
@@ -100,7 +115,7 @@ def process_options(scanner: str, options: Dict[str, str]) -> List[str]:
     args.append('--mode')
     if options['format'] == 'color':
         args.append('Color')
-    args.append('resolution')
+    args.append('--resolution')
     args.append(options['dpi'].split('_')[1])
     return args
 
@@ -120,6 +135,10 @@ def run_command(command: List[str], file: str) -> None:
 
 
 SCANNERS = get_scanners()
+try:
+    PREVIEW_EXISTS = subprocess.check_output(['convert', '-version'])
+except FileNotFoundError:
+    PREVIEW_EXISTS = False
 
 
 if __name__ == "__main__":

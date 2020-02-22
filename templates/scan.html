@@ -2,15 +2,19 @@
 <html lang="en-US">
 
 <head>
-  <title>Web for scanimage</title>
+  <title>Pagescan for scanimage</title>
   <meta name="viewport" charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="static/style.css">
 </head>
 
 <body id="frame-background">
-{% if image %}
+{% if not preview %}
+  <h2 id="error">Preview is disabled because <span class="code">convert</span>
+    from <em>ImageMagick</em> was not found.
+  </h2>
+{% elif image %}
   <!-- Show an image here. -->
-  <img src="{{ image }}" id="preview" />
+  <img src="{{ url_for('preview.static', filename=image) }}" id="preview" />
 {% else %}
   <!-- Blank page if nothing was scanned. -->
 {% endif %}

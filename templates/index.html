@@ -2,12 +2,12 @@
 <html lang="en-US">
 
 <head>
-  <title>Web for scanimage</title>
+  <title>Pagescan for scanimage</title>
   <meta name="viewport" charset="UTF-8" />
   <link rel="stylesheet" type="text/css" href="static/style.css" />
 </head>
 
-<h1 class="text padded">Web for <span class="code">scanimage</span></h1>
+<h1 class="padded">Pagescan for <span class="code">scanimage</span></h1>
 
 <body id="background">
 {% if scanners %}
@@ -15,7 +15,7 @@
     <span class="blocked">
       <!-- Printer selection -->
       <div class="separated blocked">
-        <label for="scanner" id="scanner" class="spaced blocked text">Scanner</label>
+        <label for="scanner" id="scanner" class="spaced blocked">Scanner</label>
         <select id="scanner" name="scanner">
         {% for scanner in scanners %}
           <option value="{{ scanner }}">{{ scanner }}</option>
@@ -24,7 +24,7 @@
       </div>
 
       <!-- scanimage options -->
-      <p class="text">
+      <p>
         <span class="options spaced blocked">Color</span>
         <span class="spaced blocked">
           <input type="radio" id="c_bw" name="color" value="bw" checked>
@@ -36,11 +36,15 @@
         </span>
       </p>
 
-      <p class="text">
+      <p>
         <span class="options spaced blocked">Format</span>
         <span class="spaced blocked">
           <input type="radio" id="fmt_pnm" name="format" value="pnm" checked>
           <label for="fmt_pnm">PNM</label>
+        </span>
+        <span class="spaced blocked">
+          <input type="radio" id="fmt_jpg" name="format" value="jpg">
+          <label for="fmt_jpg">JPG</label>
         </span>
         <span class="spaced blocked">
           <input type="radio" id="fmt_tiff" name="format" value="tiff">
@@ -48,7 +52,7 @@
         </span>
       </p>
 
-      <label for="dpi" class="options spaced blocked text padded">DPI</label>
+      <label for="dpi" class="options spaced blocked padded">DPI</label>
       <select id="dpi" name="dpi">
         <option value="dpi_72">72</option>
         <option value="dpi_96">96</option>
@@ -59,9 +63,15 @@
 
     <!-- Preview and scan buttons -->
     <span class="blocked spaced">
-      <input type="submit" class="button" formmethod="post" formtarget="frame" name="preview" value="Preview"\>
+      <!-- "Preview" is disabled if file conversion isn't available. -->
+      {% if preview %}
+        <input type="submit" class="button" formmethod="post" formtarget="frame" name="preview" value="Preview" \>
+      {% else %}
+        <input type="submit" class="button" formmethod="post" formtarget="frame" name="preview" value="Preview" disabled \>
+      {% endif %}
       <br />
-      <input type="submit" class="button" formmethod="post" formtarget="frame" name="scan" value="Scan"\>
+      <!-- "Scan", on the other hand, should always be available. -->
+      <input type="submit" class="button" formmethod="post" formtarget="frame" name="scan" value="Scan" \>
     </span>
   </form>
 
@@ -70,7 +80,7 @@
 
 {% else %}
   <!-- If no scanner was found, do not show the interface. -->
-  <h2>No scanners were found. Try checking
+  <h2 id="error">No scanners were found. Try checking
     <span class="code">scanimage -L</span>.
   </h2>
 {% endif %}
