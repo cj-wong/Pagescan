@@ -1,4 +1,3 @@
-import os.path
 import subprocess
 from typing import Callable, Dict, List
 
@@ -11,7 +10,7 @@ from preview import preview
 app = Flask(__name__)
 app.register_blueprint(preview)
 
-PREVIEW_SCAN = ['scanimage']
+PREVIEW_CMD = ['scanimage']
 
 
 @app.route('/')
@@ -53,22 +52,19 @@ def scan() -> Callable[..., str]:
             )
     else:
         scanner = request.form['scanner'].split('`')[1].split("'")[0]
+        name = str(pendulum.now())
         if 'scan' in request.form:
             options = request.form.to_dict()
             options['format'] = options['format'].lower()
             command = process_options(scanner, options)
-            name = f"{pendulum.now()}.{options['format']}"
-            file = os.path.abspath(f"scans/{name}")
-            run_command(command, file)
+            run_command(command, 'scans', name, options['format'])
             return app.send_file(
                 file,
                 as_attachment=True,
                 attachment_filename=file,
                 )
         else:
-            name = f"{pendulum.now()}.pnm"
-            file = os.path.abspath(f"previews/{name}")
-            run_command(PREVIEW_SCAN, file)
+            run_command(PREVIEW_CMD, 'previews', name, 'jpg')
             return render_template(
                 'scan.html',
                 image=name,
@@ -112,26 +108,40 @@ def process_options(scanner: str, options: Dict[str, str]) -> List[str]:
     args.append(scanner)
     args.append('--format')
     args.append(options['format'])
-    args.append('--mode')
+    # The default for `scanimage` is B&W
     if options['format'] == 'color':
+        args.append('--mode')
         args.append('Color')
     args.append('--resolution')
     args.append(options['dpi'].split('_')[1])
     return args
 
 
-def run_command(command: List[str], file: str) -> None:
+def run_command(command: List[str], target: str, file: str, fmt: str) -> None:
     """Run the command defined as a list of strings. Both "Preview"
     and "Scan" use this. Outputs the file name of the created scan.
 
+    Because ".pnm" files cannot be used as previews, previews will
+    be outputted as ".jpg". See the function call in `scan()`.
+
     Args:
         command (List[str]): the command in list form
-        file (str): where the resulting scan will be stored
+        target (str): target directory, i.e. scans, previews
+        file (str): where the resulting scan will be stored, without
+            the desired extension (`fmt`)
+        fmt (str): image format, i.e. pnm, jpg, tiff
 
     """
-    with open(file, 'w') as f:
-        command = subprocess.Popen(command, stdout=f)
-        command.wait()
+    out = f'{target}/{file}.{fmt}'
+
+    if fmt == 'pnm':
+        with open(out, 'w') as f:
+            command = subprocess.Popen(command, stdout=f)
+    else:
+        pipe = subprocess.Popen(command, stdout=subprocess.PIPE)
+        command = subprocess.Popen(['convert', out], stdin=pipe)
+
+    command.wait()
 
 
 SCANNERS = get_scanners()
