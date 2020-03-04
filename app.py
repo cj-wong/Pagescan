@@ -2,7 +2,7 @@ import subprocess
 from typing import Callable, Dict, List
 
 import pendulum
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 
 from preview import preview
 
@@ -58,7 +58,7 @@ def scan() -> Callable[..., str]:
             options['format'] = options['format'].lower()
             command = process_options(scanner, options)
             run_command(command, 'scans', name, options['format'])
-            return app.send_file(
+            return send_file(
                 file,
                 as_attachment=True,
                 attachment_filename=file,
@@ -139,7 +139,8 @@ def run_command(command: List[str], target: str, file: str, fmt: str) -> None:
             command = subprocess.Popen(command, stdout=f)
     else:
         pipe = subprocess.Popen(command, stdout=subprocess.PIPE)
-        command = subprocess.Popen(['convert', out], stdin=pipe)
+        pipe.wait()
+        command = subprocess.Popen(['convert', '-', out], stdin=pipe)
 
     command.wait()
 
