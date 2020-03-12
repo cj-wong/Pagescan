@@ -11,68 +11,67 @@
 
 <body id="background">
 {% if scanners %}
-  <form class="options" action="scan.html" method="post">
-    <span class="blocked">
-      <!-- Printer selection -->
-      <div class="separated blocked">
-        <label for="scanner" id="scanner" class="spaced blocked">Scanner</label>
-        <select id="scanner" name="scanner">
-        {% for scanner in scanners %}
-          <option value="{{ scanner }}">{{ scanner }}</option>
-        {% endfor %}
-        </select>
-      </div>
+  <form id="input" action="scan.html" method="post">
+    <!-- Printer selection -->
+    <p class="separated">
+      <label for="scanner" id="scanner" class="options">Scanner</label>
+      <select name="scanner">
+      {% for scanner in scanners %}
+        <option value="{{ scanner }}">{{ scanner }}</option>
+      {% endfor %}
+      </select>
+    </p>
 
-      <!-- scanimage options -->
-      <p>
-        <span class="options spaced blocked">Color</span>
-        <span class="spaced blocked">
-          <input type="radio" id="c_bw" name="color" value="bw" checked>
-          <label for="c_bw" class="spaced">Black & White</label>
-        </span>
-        <span class="spaced blocked">
-          <input type="radio" id="c_color" name="color" value="color">
-          <label for="c_color" class="spaced">Color</label>
-        </span>
-      </p>
+    <!-- scanimage options -->
+    <p>
+      <span class="options">Color</span>
+      <span>
+        <input type="radio" id="c_bw" name="color" value="bw" checked />
+        <label for="c_bw">B&W</label>
+      </span>
+      <span>
+        <input type="radio" id="c_color" name="color" value="color" />
+        <label for="c_color">Color</label>
+      </span>
+    </p>
 
-      <p>
-        <span class="options spaced blocked">Format</span>
-        <span class="spaced blocked">
-          <input type="radio" id="fmt_pnm" name="format" value="pnm" checked>
-          <label for="fmt_pnm">PNM</label>
-        </span>
-        <span class="spaced blocked">
-          <input type="radio" id="fmt_jpg" name="format" value="jpg">
-          <label for="fmt_jpg">JPG</label>
-        </span>
-        <span class="spaced blocked">
-          <input type="radio" id="fmt_tiff" name="format" value="tiff">
-          <label for="fmt_tiff">TIFF</label>
-        </span>
-      </p>
+    <p>
+      <span class="options">Format</span>
+      <span>
+        <input type="radio" id="fmt_pnm" name="format" value="pnm" checked />
+        <label for="fmt_pnm">PNM</label>
+      </span>
+      <span>
+        <input type="radio" id="fmt_jpg" name="format" value="jpg" />
+        <label for="fmt_jpg">JPG</label>
+      </span>
+      <span>
+        <input type="radio" id="fmt_tiff" name="format" value="tiff" />
+        <label for="fmt_tiff">TIFF</label>
+      </span>
+    </p>
 
-      <label for="dpi" class="options spaced blocked padded">DPI</label>
+    <p>
+      <label for="dpi" class="options">DPI</label>
       <select id="dpi" name="dpi">
         <option value="dpi_72">72</option>
         <option value="dpi_96">96</option>
         <option value="dpi_150">150</option>
         <option value="dpi_300">300</option>
       </select>
-    </span>
+    </p>
 
     <!-- Preview and scan buttons -->
-    <span class="blocked spaced">
+    <p>
       <!-- "Preview" is disabled if file conversion isn't available. -->
       {% if preview %}
-        <input type="submit" class="button" formmethod="post" formtarget="frame" name="preview" value="Preview" \>
+        <input type="submit" class="button" formmethod="post" formtarget="frame" name="preview" value="Preview" />
       {% else %}
-        <input type="submit" class="button" formmethod="post" formtarget="frame" name="preview" value="Preview" disabled \>
+        <input type="submit" class="button" formmethod="post" formtarget="frame" name="preview" value="Preview" disabled />
       {% endif %}
-      <br />
       <!-- "Scan", on the other hand, should always be available. -->
-      <input type="submit" class="button" formmethod="post" formtarget="frame" name="scan" value="Scan" \>
-    </span>
+      <input type="submit" class="button" formmethod="post" formtarget="frame" name="scan" value="Scan" />
+    </p>
   </form>
 
   <!-- Scan preview frame -->

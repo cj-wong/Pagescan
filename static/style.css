@@ -1,23 +1,29 @@
 html {
     font-family: sans-serif;
 }
-.blocked {
-    display: inline-block;
-}
 .button {
     min-width: 7vw;
 }
 .options {
     font-weight: bold;
 }
-.padded {
-    padding-bottom: 10px;
-}
 .separated {
     border-bottom: 1px solid;
     padding-bottom: 10px;
+    width: 95vw;
 }
 .spaced {
+    min-width: 10vw;
+}
+h1.padded {
+    padding-bottom: 10px;
+}
+label.options {
+    display: inline-block;
+    min-width: 10vw;
+}
+p > span {
+    display: inline-block;
     min-width: 10vw;
 }
 span.code {
@@ -32,8 +38,9 @@ span.code {
     color: #B72B2B;
 }
 #frame {
-    height: 90vh;
-    width: 90vw;
+    min-height: 50vh;
+    max-height: 90vh;
+    width: 95vw;
 }
 #frame-background {
     background-color: #708394;
@@ -45,5 +52,4 @@ span.code {
 }
 #scanner {
     font-size: 150%;
-    font-weight: bold;
 }
